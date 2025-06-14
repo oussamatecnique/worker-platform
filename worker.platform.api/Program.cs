@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 using worker.platform.application;
 using worker.platform.Filters;
@@ -11,9 +13,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigureInfraServices(builder.Configuration);
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = BearerTokenDefaults.AuthenticationScheme;
+});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("admin", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("admin");
+    });
 builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidatorActionFilter>();

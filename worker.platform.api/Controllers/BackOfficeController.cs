@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using worker.platform.application.BackOffice;
 using worker.platform.application.BackOffice.DTOs;
 using worker.platform.application.Users.Services;
@@ -7,6 +8,7 @@ namespace worker.platform.Controllers;
 
 [ApiController]
 [Route("api/bo")]
+[Authorize("admin")]
 public class BackOfficeController : BaseAuthenticatedUserController
 {
     private readonly ILogger<BackOfficeController> _logger;

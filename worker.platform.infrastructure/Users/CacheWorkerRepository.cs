@@ -11,9 +11,10 @@ public class CacheWorkerRepository: ICacheWorkerRepository
     private readonly ICacheRepository _cacheRepository;
     private readonly IWorkerRepository _workerRepository;
 
-    public CacheWorkerRepository(ICacheRepository cacheRepository)
+    public CacheWorkerRepository(ICacheRepository cacheRepository, IWorkerRepository workerRepository)
     {
         _cacheRepository = cacheRepository ?? throw new ArgumentNullException(nameof(cacheRepository));
+        _workerRepository = workerRepository ?? throw new ArgumentNullException(nameof(workerRepository));
     }
 
     public ValueTask<Worker> GetCachedWorker(int id, CancellationToken cancellationToken = default)

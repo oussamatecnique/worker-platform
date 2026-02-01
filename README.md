@@ -4,8 +4,11 @@ and the customer then choose based on responder profile and pricing. the worker 
 
 ### Project architrecure
 Api layer: contains api controllers, authentication/authorization, http filters/middlewares.
+
 Application layer: contains applicaiton logic encapsulated into modular services, this layer is origanized into folders by domain.
+
 Domain layer: contains all entities that defines the domain of the app.
+
 Infrastructure layer: contains database repositories, cache repositories, email... and potentially access data classes.
 
 

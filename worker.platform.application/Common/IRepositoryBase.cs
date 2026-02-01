@@ -11,7 +11,7 @@ public interface IRepositoryBase<T, TKey> where T: class
         CancellationToken cancellationToken = default
     );
 
-    public ValueTask<T?> FindAsync(TKey key, CancellationToken cancellationToken = default);
+    public ValueTask<T> FindAsync(TKey key, CancellationToken cancellationToken = default);
 
     public void Add(T newEntity);
 

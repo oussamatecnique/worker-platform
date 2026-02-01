@@ -420,6 +420,7 @@ namespace worker.platform.infrastructure.Migrations
                 column: "UserId");
 
             MigrationHelpers.ExecuteSqlFile(migrationBuilder, "cities_seed.sql");
+            MigrationHelpers.ExecuteSqlFile(migrationBuilder, "roles_seed.sql");
         }
 
         /// <inheritdoc />

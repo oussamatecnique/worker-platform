@@ -15,6 +15,6 @@ public class WorkerRepository(ApplicationDbContext applicationDbContext, ICacheR
     {
         return await DbSet.Include(worker => worker.City).Include(worker => worker.JobCategory)
             .Include(worker => worker.User).Include(worker => worker.JobAssignments)
-            .AsSplitQuery().FirstOrDefaultAsync(cancellationToken);
+            .AsSplitQuery().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 }

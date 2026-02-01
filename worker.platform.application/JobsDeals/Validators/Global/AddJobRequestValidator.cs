@@ -1,17 +1,13 @@
-﻿using Validot;
-using worker.platform.application.JobsDeals.Repositories;
+﻿using FluentValidation;
 
-namespace worker.platform.application.JobsDeals.Validators;
+namespace worker.platform.application.JobsDeals.Validators.Global;
 
-public class AddJobRequestValidator: ISpecificationHolder<AddJobRequestDto>
+public class AddJobRequestValidator: AbstractValidator<AddJobRequestDto>
 {
-    public Specification<AddJobRequestDto> Specification { get; }
-
-    public AddJobRequestValidator(ICacheTaskTypeParamsDefinitionRepository taskTypeParamsDefinitionRepository)
+    public AddJobRequestValidator()
     {
-        Specification<AddJobRequestDto> specification = s =>
-            s.Member(x => x.TaskTypeId, x => x.Positive())
-                .Member(x => x.Details, x => x.NotEmpty())
-                .Member(x => x.StartDate, x => x.After(DateTime.Now));
+        RuleFor(x => x.TaskTypeId).GreaterThanOrEqualTo(0);
+        RuleFor(x => x.Details).NotEmpty();
+        RuleFor(x => x.StartDate).GreaterThanOrEqualTo(DateTime.Now);
     }
 }

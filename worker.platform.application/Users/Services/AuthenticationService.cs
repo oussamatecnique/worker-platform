@@ -3,8 +3,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using worker.platform.application.Common;
 using worker.platform.application.Common.Auth;
-using worker.platform.application.Common.Exceptions;
-using worker.platform.application.Common.Validation;
+using worker.platform.application.Common.Caching;
 using worker.platform.application.Users.DTOs;
 using worker.platform.application.Users.Exceptions;
 using worker.platform.application.Users.Helpers;
@@ -16,22 +15,21 @@ namespace worker.platform.application.Users.Services;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IUserRepository _userRepository;
+    private readonly ICacheRepository _cacheRepository;
     private readonly IUserMapper _userMapper;
     private readonly IJwtHelper _jwtHelper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<AuthenticationService> _logger;
-    private readonly IModelValidator _modelValidator;
 
     public AuthenticationService(IUserRepository userRepository, IUserMapper userMapper, IUnitOfWork unitOfWork,
-        IJwtHelper jwtHelper, IModelValidator modelValidator, ILogger<AuthenticationService> logger
-    )
+        IJwtHelper jwtHelper, ILogger<AuthenticationService> logger, ICacheRepository cacheRepository)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _userMapper = userMapper ?? throw new ArgumentNullException(nameof(userMapper));
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _jwtHelper = jwtHelper ?? throw new ArgumentNullException(nameof(jwtHelper));
-        _modelValidator = modelValidator ?? throw new ArgumentNullException(nameof(modelValidator));
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _cacheRepository = cacheRepository ??  throw new ArgumentNullException(nameof(cacheRepository));
     }
 
     public async Task<string> SignInAsync(string email, string password)
@@ -61,17 +59,18 @@ public class AuthenticationService : IAuthenticationService
         return user;
     }
 
-    public async Task<User?> GetUserByIdAsync(int userId) => await _userRepository.GetUserById(userId);
+    public async Task<User> GetUserByIdAsync(int userId)
+    {
+        var user = await _cacheRepository.GetOrSetAsync<User>($"user-{userId}", async (_) =>
+            await _userRepository.GetUserById(userId));
+        
+        _ =  user ?? throw new UserNotFoundException("User not found");
+        
+        return user;
+    } 
 
     public async Task<bool> SignUpAsync(SignUpUserDto userDto)
     {
-        var (isValid, errorMessage) = _modelValidator.Validate(userDto);
-
-        if (!isValid)
-        {
-            throw new ValidationException(errorMessage);
-        }
-
         var user = _userMapper.SignupUserDtoToUser(userDto);
 
         _userRepository.Add(user);
@@ -81,11 +80,6 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<bool> SetupWorkerProfile(WorkerProfileDto workerProfileDto)
     {
-        var (isValid, errorMessage) = _modelValidator.Validate(workerProfileDto);
-        if (!isValid)
-        {
-            throw new ValidationException(errorMessage);
-        }
         var worker = _userMapper.WorkerProfileDtoToWorker(workerProfileDto);
 
         _userRepository.AddOrUpdateWorkerProfile(worker);

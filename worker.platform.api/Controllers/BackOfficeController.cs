@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using worker.platform.application.BackOffice;
 using worker.platform.application.BackOffice.DTOs;
@@ -8,7 +10,7 @@ namespace worker.platform.Controllers;
 
 [ApiController]
 [Route("api/bo")]
-[Authorize("admin")]
+[Authorize("admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class BackOfficeController : BaseAuthenticatedUserController
 {
     private readonly ILogger<BackOfficeController> _logger;

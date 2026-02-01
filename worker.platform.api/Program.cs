@@ -1,10 +1,14 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication.BearerToken;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 using worker.platform.application;
-using worker.platform.Filters;
 using worker.platform.infrastructure;
 using worker.platform.Middlewares;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using worker.platform.domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,22 +17,39 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigureInfraServices(builder.Configuration);
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = BearerTokenDefaults.AuthenticationScheme;
-});
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])
+            )
+        };
+    });
+
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("admin", policy =>
     {
         policy.RequireAuthenticatedUser();
-        policy.RequireRole("admin");
+        policy.RequireRole($"{Role.Constants.AdminKey}");
     });
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<ValidatorActionFilter>();
 });
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+    
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -85,6 +106,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseHttpsRedirection();
-
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 app.Run();

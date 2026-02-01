@@ -1,19 +1,15 @@
-﻿using System.Reflection;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Validot;
 using worker.platform.application.BackOffice;
 using worker.platform.application.Users.Mappers;
 using worker.platform.application.Common.Auth;
 using worker.platform.application.Common.Models;
-using worker.platform.application.Common.Validation;
 using worker.platform.application.JobsDeals.Mappers;
 using worker.platform.application.JobsDeals.Services;
 using worker.platform.application.JobsDeals.Validators;
-using worker.platform.application.Users.Mappers;
+using worker.platform.application.JobsDeals.Validators.Global;
 using worker.platform.application.Users.Services;
-using worker.platform.application.Users.Validators;
 using UserMapper = worker.platform.application.Users.Mappers.UserMapper;
 
 namespace worker.platform.application;
@@ -40,22 +36,10 @@ public static class DependencyInjection
         return services;
     }
 
-    public static void AddValidators(this IServiceCollection services)
+    private static void AddValidators(this IServiceCollection services)
     {
-        var holderAssemblies = Assembly.GetExecutingAssembly();
-        var holders = Validator.Factory.FetchHolders(holderAssemblies)
-            .GroupBy(h => h.SpecifiedType)
-            .Select(s => new
-            {
-                ValidatorType = s.First().ValidatorType,
-                ValidatorInstance = s.First().CreateValidator()
-            });
-        foreach (var holder in holders)
-        {
-            services.AddSingleton(holder.ValidatorType, holder.ValidatorInstance);
-        }
-
-        services.AddScoped<IModelValidator, ModelValidator>();
+        services.AddValidatorsFromAssemblyContaining<AddJobRequestValidator>();
+        
         services.AddScoped<IJobAssignmentValidator, JobAssignmentValidator>();
     }
 }

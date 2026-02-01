@@ -12,11 +12,11 @@ public class WrongPasswordException: UnauthorizedAccessException
     {
     }
 
-    public WrongPasswordException(string? message) : base(message)
+    public WrongPasswordException(string message) : base(message)
     {
     }
 
-    public WrongPasswordException(string? message, Exception? inner) : base(message, inner)
+    public WrongPasswordException(string message, Exception inner) : base(message, inner)
     {
     }
 }

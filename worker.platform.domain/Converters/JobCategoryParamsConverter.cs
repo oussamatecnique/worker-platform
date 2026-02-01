@@ -6,7 +6,7 @@ namespace worker.platform.domain.Converters;
 
 public class JobParamsConverter: JsonConverter<IJobCategoryParams>
 {
-    public override IJobCategoryParams? Read(ref Utf8JsonReader reader, Type typeToConvert,
+    public override IJobCategoryParams Read(ref Utf8JsonReader reader, Type typeToConvert,
         JsonSerializerOptions options
     )
     {

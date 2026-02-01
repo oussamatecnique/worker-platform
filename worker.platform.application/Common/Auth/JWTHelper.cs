@@ -27,7 +27,7 @@ public class JwtHelper(IOptions<JwtSettings> options) : IJwtHelper
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: "testIssuer",
+            issuer: _jwtOptions.Issuer,
             audience: _jwtOptions.Audience,
             claims: claims,
             expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtOptions.ExpirationInMinutes, CultureInfo.InvariantCulture)),

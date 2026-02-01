@@ -13,11 +13,11 @@ public class NotFoundArgumentsException: NotFoundException
     {
     }
 
-    public NotFoundArgumentsException(string? message) : base(message)
+    public NotFoundArgumentsException(string message) : base(message)
     {
     }
 
-    public NotFoundArgumentsException(string? message, Exception? innerException) : base(message, innerException)
+    public NotFoundArgumentsException(string message, Exception innerException) : base(message, innerException)
     {
     }
 

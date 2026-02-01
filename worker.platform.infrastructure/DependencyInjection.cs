@@ -28,10 +28,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ITaskTypeParamDefinitionRepository, ITaskTypeParamsDefinitionRepository>();
         services.AddScoped<ICacheRepository, CacheRepository>();
-        services.AddScoped<ICacheWorkerRepository, CacheWorkerRepository>();
-        services
-            .AddScoped<ICacheTaskTypeParamsDefinitionRepository,
-                CacheTaskTypeParamsDefinitionRepositoryRepository>();
+
 
         services.AddScoped<ITaskTypeRepository, TaskTypeRepository>();
     }

@@ -1,22 +1,12 @@
-﻿using Validot;
-using worker.platform.application.Users.Repositories;
+﻿using FluentValidation;
 
-namespace worker.platform.application.JobsDeals.Validators;
+namespace worker.platform.application.JobsDeals.Validators.Global;
 
-public class JobResponseValidator: ISpecificationHolder<JobResponseDto>
+public class JobResponseValidator : AbstractValidator<JobResponseDto>
 {
-    public Specification<JobResponseDto> Specification { get; }
-
-
-    public JobResponseValidator(ICacheWorkerRepository cacheWorkerRepository)
+    public JobResponseValidator()
     {
-        ArgumentNullException.ThrowIfNull(cacheWorkerRepository);
-
-        Specification<JobResponseDto> jobResponseSpecification =
-            s => s.Member(x => x.WorkerId, x => x.Positive())
-                .Member(x => x.JobRequestId, x => x.Positive());
-
-
-        Specification = jobResponseSpecification;
+        RuleFor(x => x.WorkerId).GreaterThan(0);
+        RuleFor(x => x.JobRequestId).GreaterThan(0);
     }
 }

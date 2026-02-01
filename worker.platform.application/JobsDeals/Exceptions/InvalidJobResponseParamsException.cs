@@ -14,11 +14,11 @@ public class InvalidJobResponseParamsException: ValidationException
     {
     }
 
-    public InvalidJobResponseParamsException(string? message) : base(message)
+    public InvalidJobResponseParamsException(string message) : base(message)
     {
     }
 
-    public InvalidJobResponseParamsException(string? message, Exception? innerException) : base(message, innerException)
+    public InvalidJobResponseParamsException(string message, Exception innerException) : base(message, innerException)
     {
     }
 }

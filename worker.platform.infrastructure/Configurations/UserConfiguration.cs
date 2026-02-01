@@ -15,6 +15,8 @@ public class UserConfiguration: IEntityTypeConfiguration<User>
         builder.Property(u => u.Email)
             .HasColumnType("nvarchar(max)");
 
+        builder.HasIndex(x => x.Email).IsUnique();
+
         builder.HasOne<Role>(x => x.Role)
             .WithMany()
             .HasForeignKey(x => x.RoleId);

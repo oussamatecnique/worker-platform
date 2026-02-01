@@ -6,7 +6,7 @@ public interface IAuthenticationService
 {
     public Task<string> SignInAsync(string email, string password);
 
-    Task<User?> GetUserByIdAsync(int userId);
+    Task<User> GetUserByIdAsync(int userId);
 
     public Task<bool> SignUpAsync(SignUpUserDto userDto);
 

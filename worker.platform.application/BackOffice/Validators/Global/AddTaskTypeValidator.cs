@@ -1,17 +1,13 @@
-﻿using Validot;
+﻿using FluentValidation;
 using worker.platform.application.BackOffice.DTOs;
 
 namespace worker.platform.application.BackOffice.Validators.Global;
 
-public class AddTaskTypeValidator: ISpecificationHolder<AddTaskTypeDto>
+public class AddTaskTypeValidator: AbstractValidator<AddTaskTypeDto>
 {
-    public Specification<AddTaskTypeDto> Specification { get; }
-
     public AddTaskTypeValidator()
     {
-        Specification<AddTaskTypeDto> specification = s => s.Member(x => x.Description, x => x.NotEmpty())
-            .Member(x => x.jobCategoryId, x => x.GreaterThan(-1));
-
-        Specification = specification;
+        RuleFor(x => x.Description).NotEmpty();
+        RuleFor(x => x.jobCategoryId).GreaterThanOrEqualTo(0);
     }
 }

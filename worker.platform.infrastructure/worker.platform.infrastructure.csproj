@@ -30,6 +30,10 @@
       <EmbeddedResource Include="SqlFiles\cities_seed.sql">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <None Remove="SqlFiles\roles_seed.sql" />
+      <EmbeddedResource Include="SqlFiles\roles_seed.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

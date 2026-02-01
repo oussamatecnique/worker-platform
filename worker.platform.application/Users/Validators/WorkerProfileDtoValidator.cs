@@ -1,22 +1,17 @@
-﻿using Validot;
+﻿using FluentValidation;
 using worker.platform.application.Users.DTOs;
 
 namespace worker.platform.application.Users.Validators;
 
-public class WorkerProfileDtoValidator : ISpecificationHolder<WorkerProfileDto>
+public class WorkerProfileDtoValidator : AbstractValidator<WorkerProfileDto>
 {
-    public Specification<WorkerProfileDto> Specification { get; }
-
     public WorkerProfileDtoValidator()
     {
-        Specification<WorkerProfileDto> workerProfileSpecification =
-            s => s.Member(x => x.FirstName, x => x.NotEmpty().LengthBetween(1, 100))
-                .Member(x => x.LastName, x => x.NotEmpty().LengthBetween(1, 100))
-                .Member(x => x.Address, x => x.NotEmpty().LengthBetween(1, 200))
-                .Member(x => x.CIN, x => x.NotEmpty().ExactLength(8))
-                .Member(x => x.PhoneNumber, x => x.NotEmpty())
-                .Member(x => x.JobCategoryId, x => x.Positive());
-
-        Specification = workerProfileSpecification;
+        RuleFor(x => x.FirstName).NotEmpty().MinimumLength(1).MaximumLength(100);
+        RuleFor(x => x.LastName).NotEmpty().MinimumLength(1).MaximumLength(100);
+        RuleFor(x => x.Address).NotEmpty().MinimumLength(1).MaximumLength(500);
+        RuleFor(x => x.CIN).NotEmpty().Length(8);
+        RuleFor(x => x.PhoneNumber).NotEmpty();
+        RuleFor(x => x.JobCategoryId).NotEmpty().GreaterThanOrEqualTo(0);
     }
 }

@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
             <PrivateAssets>all</PrivateAssets>
@@ -30,6 +31,10 @@
     <ItemGroup>
       <ProjectReference Include="..\worker.platform.application\worker.platform.application.csproj" />
       <ProjectReference Include="..\worker.platform.infrastructure\worker.platform.infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Filters\" />
     </ItemGroup>
 
 </Project>

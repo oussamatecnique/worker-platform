@@ -8,17 +8,15 @@ using worker.platform.infrastructure.Common;
 
 namespace worker.platform.infrastructure.Users;
 
-public class UserRepository(ApplicationDbContext applicationDbContext, ICacheRepository cacheRepository)
+public class UserRepository(ApplicationDbContext applicationDbContext)
     : RepositoryBase<User, int>(applicationDbContext), IUserRepository
 {
     private readonly ApplicationDbContext _applicationDbContext =
         applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
-
-    private readonly ICacheRepository _cacheRepository =
-        cacheRepository ?? throw new ArgumentNullException(nameof(cacheRepository));
+    
 
 
-    public async ValueTask<User?> GetByEmailAsync(string email) =>
+    public async ValueTask<User> GetByEmailAsync(string email) =>
         await DbSet.FirstOrDefaultAsync(x => x.Email == email);
 
     public async Task<PagedResultModel<User>> GetPagedUsersAsync(GetPagedKeySetQuery query)
@@ -32,10 +30,9 @@ public class UserRepository(ApplicationDbContext applicationDbContext, ICacheRep
         };
     }
 
-    public async ValueTask<User?> GetUserById(int userId)
+    public async ValueTask<User> GetUserById(int userId)
     {
-        return await _cacheRepository.GetOrSetAsync<User>($"user-{userId}",
-            async (old) => await DbSet.FindAsync(userId));
+        return await DbSet.FindAsync(userId);
     }
 
     public void AddOrUpdateWorkerProfile(Worker worker)

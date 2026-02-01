@@ -14,7 +14,7 @@ public abstract class RepositoryBase<T, TKey>(ApplicationDbContext applicationDb
     public virtual Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
         => DbSet.ToListAsync(cancellationToken).ContinueWith(task => task.Result.AsEnumerable(), cancellationToken);
 
-    public virtual ValueTask<T?> FindAsync(TKey key, CancellationToken cancellationToken = default)
+    public virtual ValueTask<T> FindAsync(TKey key, CancellationToken cancellationToken = default)
         => DbSet.FindAsync([key], cancellationToken);
 
 public virtual async Task<IEnumerable<T>> GetPagedCursor(IQueryable<T> source,

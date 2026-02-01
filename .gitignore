@@ -399,3 +399,26 @@ FodyWeavers.xsd
 
 
 *.dgspec.json
+
+# ============================
+# .NET / NuGet generated files
+# ============================
+**/obj/**
+**/bin/**
+
+project.assets.json
+project.nuget.cache
+project.assets.cache
+project.fragment.lock.json
+
+# Auto-generated AssemblyInfo
+**/*.AssemblyInfo.cs
+
+# ============================
+# JetBrains Rider
+# ============================
+.idea/
+.idea/**
+*.sln.iml
+rider.project.*
+
